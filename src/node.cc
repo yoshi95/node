@@ -3410,6 +3410,16 @@ static void CheckIfAllowedInEnv(const char* exe, bool is_env,
     "--max_old_space_size",
     "--perf_basic_prof",
     "--perf_prof",
+    "--asm_wasm_lazy_compilation",
+    "--aggressive_lazy_inner_functions",
+    "--validate_asm",
+    "--experimental_wasm_anyref",
+    "--use_idle_notification",
+    "--no-experimental_wasm_anyref",
+    "--no-use_idle_notification",
+    "--no-validate_asm",
+    "--no-asm_wasm_lazy_compilation",
+    "--no-aggressive_lazy_inner_functions",
     "--stack_trace_limit",
   };
 
@@ -3848,13 +3858,6 @@ static void DebugEnd(const FunctionCallbackInfo<Value>& args) {
 
 inline void PlatformInit() {
 #ifdef __POSIX__
-#if HAVE_INSPECTOR
-  sigset_t sigmask;
-  sigemptyset(&sigmask);
-  sigaddset(&sigmask, SIGUSR1);
-  const int err = pthread_sigmask(SIG_SETMASK, &sigmask, nullptr);
-#endif  // HAVE_INSPECTOR
-
   // Make sure file descriptors 0-2 are valid before we start logging anything.
   for (int fd = STDIN_FILENO; fd <= STDERR_FILENO; fd += 1) {
     struct stat ignored;
@@ -3867,10 +3870,6 @@ inline void PlatformInit() {
     if (fd != open("/dev/null", O_RDWR))
       ABORT();
   }
-
-#if HAVE_INSPECTOR
-  CHECK_EQ(err, 0);
-#endif  // HAVE_INSPECTOR
 
 #ifndef NODE_SHARED_MODE
   // Restore signal dispositions, the parent process may have changed them.

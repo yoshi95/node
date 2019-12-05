@@ -567,7 +567,10 @@ void ScopeInfo::SetIsDebugEvaluateScope() {
 bool ScopeInfo::HasContext() const { return ContextLength() > 0; }
 
 Object* ScopeInfo::FunctionName() const {
-  DCHECK(HasFunctionName());
+  // DCHECK(HasFunctionName());
+  if (!HasFunctionName()) {
+    return SharedFunctionInfo::kNoSharedNameSentinel;
+  }
   return get(FunctionNameInfoIndex());
 }
 

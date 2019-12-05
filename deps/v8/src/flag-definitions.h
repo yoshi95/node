@@ -567,7 +567,7 @@ DEFINE_DEBUG_BOOL(wasm_break_on_decoder_error, false,
 DEFINE_BOOL(wasm_trace_memory, false,
             "print all memory updates performed in wasm code")
 
-DEFINE_BOOL(validate_asm, true, "validate asm.js modules before compiling")
+DEFINE_BOOL(validate_asm, false, "validate asm.js modules before compiling")
 DEFINE_BOOL(suppress_asm_messages, false,
             "don't emit asm.js related messages (for golden file testing)")
 DEFINE_BOOL(trace_asm_time, false, "log asm.js timing info to the console")
@@ -948,7 +948,7 @@ DEFINE_BOOL(sampling_heap_profiler_suppress_randomness, false,
 
 
 // v8.cc
-DEFINE_BOOL(use_idle_notification, true,
+DEFINE_BOOL(use_idle_notification, false,
             "Use idle notification to reduce memory footprint.")
 // ic.cc
 DEFINE_BOOL(use_ic, true, "use inline caching")
@@ -981,7 +981,7 @@ DEFINE_BOOL(lazy_inner_functions, true, "enable lazy parsing inner functions")
 DEFINE_BOOL(aggressive_lazy_inner_functions, false,
             "even lazier inner function parsing")
 DEFINE_IMPLICATION(aggressive_lazy_inner_functions, lazy_inner_functions)
-DEFINE_BOOL(preparser_scope_analysis, true,
+DEFINE_BOOL(preparser_scope_analysis, false,
             "perform scope analysis for preparsed inner functions")
 DEFINE_IMPLICATION(preparser_scope_analysis, aggressive_lazy_inner_functions)
 

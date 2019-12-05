@@ -20,6 +20,8 @@ namespace parsing {
 bool ParseProgram(ParseInfo* info, Isolate* isolate) {
   DCHECK(info->is_toplevel());
   DCHECK_NULL(info->literal());
+  if (info->script()->source()->IsUndefined(isolate))
+    return false;
 
   VMState<PARSER> state(isolate);
 
@@ -57,6 +59,7 @@ bool ParseFunction(ParseInfo* info, Handle<SharedFunctionInfo> shared_info,
   DCHECK(!info->is_toplevel());
   DCHECK(!shared_info.is_null());
   DCHECK_NULL(info->literal());
+  if (info->script()->source()->IsUndefined(isolate)) return false;
 
   // Create a character stream for the parser.
   Handle<String> source(String::cast(info->script()->source()));

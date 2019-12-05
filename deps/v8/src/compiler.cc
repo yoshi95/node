@@ -1697,6 +1697,7 @@ MaybeHandle<SharedFunctionInfo> Compiler::GetSharedFunctionInfoForScript(
         compilation_cache->PutScript(source, isolate->native_context(),
                                      language_mode, inner_result);
         Handle<Script> script(Script::cast(inner_result->script()), isolate);
+        ParseInfo parse_info(script);
         maybe_result = inner_result;
       } else {
         // Deserializer failed. Fall through to compile.

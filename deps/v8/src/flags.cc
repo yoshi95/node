@@ -637,7 +637,7 @@ static uint32_t flag_hash = 0;
 void ComputeFlagListHash() {
   std::ostringstream modified_args_as_string;
 #ifdef DEBUG
-  modified_args_as_string << "debug";
+  //modified_args_as_string << "debug";
 #endif  // DEBUG
   for (size_t i = 0; i < num_flags; ++i) {
     Flag* current = &flags[i];

@@ -232,6 +232,7 @@
         [ 'node_intermediate_lib_type=="static_library" and '
             'node_shared=="false"', {
           'xcode_settings': {
+            'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym',
             'OTHER_LDFLAGS': [
               '-Wl,-force_load,<(PRODUCT_DIR)/<(STATIC_LIB_PREFIX)'
                   '<(node_core_target_name)<(STATIC_LIB_SUFFIX)',
