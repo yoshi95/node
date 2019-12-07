@@ -253,8 +253,6 @@ HeapObject* Deserializer<AllocatorT>::PostProcessNewObject(HeapObject* obj,
     bytecode_array->set_interrupt_budget(
         interpreter::Interpreter::InterruptBudget());
     bytecode_array->set_osr_loop_nesting_level(0);
-    std::ostream &os = std::cout;
-    bytecode_array->Disassemble(os);
   }
 
   // Check alignment.

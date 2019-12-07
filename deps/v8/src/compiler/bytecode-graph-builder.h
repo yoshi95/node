@@ -39,6 +39,7 @@ class BytecodeGraphBuilder {
 
   // Creates a graph by visiting bytecodes.
   void CreateGraph();
+  void CreateStaticGraph();
 
  private:
   class Environment;

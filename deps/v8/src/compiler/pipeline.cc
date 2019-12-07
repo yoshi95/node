@@ -2024,7 +2024,7 @@ Handle<Code> Pipeline::GenerateCodeForTesting(OptimizedCompilationInfo* info,
   PipelineImpl pipeline(&data);
 
   Linkage linkage(Linkage::ComputeIncoming(data.instruction_zone(), info));
-  Deoptimizer::EnsureCodeForMaxDeoptimizationEntries(isolate);
+  //Deoptimizer::EnsureCodeForMaxDeoptimizationEntries(isolate);
 
   if (!pipeline.CreateGraph()) return Handle<Code>::null();
   if (!pipeline.OptimizeGraph(&linkage)) return Handle<Code>::null();

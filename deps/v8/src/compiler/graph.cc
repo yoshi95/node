@@ -5,6 +5,7 @@
 #include "src/compiler/graph.h"
 
 #include <algorithm>
+#include <fstream>
 
 #include "src/base/bits.h"
 #include "src/compiler/graph-visualizer.h"
@@ -71,6 +72,16 @@ NodeId Graph::NextNodeId() {
   NodeId const id = next_node_id_;
   CHECK(!base::bits::UnsignedAddOverflow32(id, 1, &next_node_id_));
   return id;
+}
+
+void Graph::PrintJSON(std::string filename, SourcePositionTable* sourcePositionTable) const {
+  std::fstream fs;
+  fs.open(
+    filename,
+    std::ios::out | std::ios::app
+  );
+  fs << AsJSON(*this, sourcePositionTable);
+  fs.close();
 }
 
 void Graph::Print() const {

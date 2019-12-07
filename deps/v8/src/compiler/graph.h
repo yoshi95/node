@@ -11,6 +11,7 @@
 #include "src/globals.h"
 #include "src/zone/zone-containers.h"
 #include "src/zone/zone.h"
+#include "compiler-source-position-table.h"
 
 namespace v8 {
 namespace internal {
@@ -89,6 +90,7 @@ class V8_EXPORT_PRIVATE Graph final : public NON_EXPORTED_BASE(ZoneObject) {
 
   // Very simple print API usable in a debugger.
   void Print() const;
+  void PrintJSON(std::string filename, SourcePositionTable*) const;
 
  private:
   friend class NodeMarkerBase;

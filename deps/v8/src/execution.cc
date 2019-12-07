@@ -2,6 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <iostream>
+#include <fstream>
+#include "src/compiler/bytecode-graph-builder.h"
+#include "src/compiler/instruction-selector.h"
+#include "src/compiler/js-graph.h"
+#include "src/compiler/simplified-operator.h"
+#include "src/compiler/simplified-operator-reducer.h"
+#include "src/compiler/graph-visualizer.h"
+#include "src/compiler/compiler-source-position-table.h"
 #include "src/execution.h"
 
 #include "src/api.h"
@@ -99,6 +108,63 @@ V8_WARN_UNUSED_RESULT MaybeHandle<Object> Invoke(
         isolate->clear_pending_message();
       }
       return value;
+    }
+
+    bool isUndefinedSource =
+      internal::Script::cast(function->shared()->script())->source() == isolate->heap()->undefined_value();
+    if (isUndefinedSource) {
+      std::ostream & os = std::cout;
+      WeakFixedArray* sharedFuncitonInfos =
+        internal::Script::cast(function->shared()->script())->shared_function_infos();
+      int infoLength = sharedFuncitonInfos->length();
+
+      Isolate* objIsolate = isolate;
+
+      for (int i = 0; i < infoLength; i++) {
+        HeapObject* infoObj = sharedFuncitonInfos->Get(i)->GetHeapObject();
+        if (infoObj->IsSharedFunctionInfo()) {
+          SharedFunctionInfo* sharedInfo = SharedFunctionInfo::cast(infoObj);
+
+          Zone *graph_zone_ = new Zone(objIsolate->allocator(), ZONE_NAME);
+          compiler::Graph *graph_ = new (graph_zone_) compiler::Graph(graph_zone_);
+          compiler::SimplifiedOperatorBuilder* simplified_ = new (graph_zone_) compiler::SimplifiedOperatorBuilder(graph_zone_);
+          compiler::MachineOperatorBuilder* machine_ = new (graph_zone_) compiler::MachineOperatorBuilder(
+            graph_zone_, MachineType::PointerRepresentation(),
+            compiler::InstructionSelector::SupportedMachineOperatorFlags(),
+            compiler::InstructionSelector::AlignmentRequirements());
+          compiler::CommonOperatorBuilder* common_ = new (graph_zone_) compiler::CommonOperatorBuilder(graph_zone_);
+          compiler::JSOperatorBuilder* javascript_ = new (graph_zone_) compiler::JSOperatorBuilder(graph_zone_);
+          compiler::JSGraph* jsgraph_ = new (graph_zone_)
+            compiler::JSGraph(objIsolate, graph_, common_, javascript_, simplified_, machine_);
+          compiler::JSTypeHintLowering::Flags flags = compiler::JSTypeHintLowering::kNoFlags;
+          compiler::SourcePositionTable* source_positions_ = new (graph_zone_) compiler::SourcePositionTable(graph_);
+
+          Handle<FeedbackVector> feedback_vector = FeedbackVector::New(isolate, handle(sharedInfo));
+          compiler::BytecodeGraphBuilder graph_builder(
+            graph_zone_, handle(sharedInfo),
+            feedback_vector,
+            BailoutId::None(), jsgraph_, compiler::CallFrequency(1.0f),
+            source_positions_, handle(function->context()),
+            SourcePosition::kNotInlined, flags, true,
+            true);
+          graph_builder.CreateGraph();
+
+          /*
+          std::string filename("/Users/yoshi95/Work/fun/pkg-test/jsgraph/" + std::to_string(i) + "-node-graph.json");
+          jsgraph_->graph()->PrintJSON(
+            filename,
+            source_positions_);
+          */
+
+          /*
+          if (sharedInfo->HasBytecodeArray()) {
+              Isolate *iso = sharedInfo->GetIsolate();
+              BytecodeArray* bytecodeArray = sharedInfo->GetBytecodeArray();
+              bytecodeArray->Disassemble(os);
+          }
+           */
+        }
+      }
     }
   }
 

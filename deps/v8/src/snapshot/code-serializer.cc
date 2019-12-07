@@ -2,6 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <iostream>
+#include "src/compiler/bytecode-graph-builder.h"
+#include "src/optimized-compilation-info.h"
+#include "src/compiler/pipeline.h"
+#include "src/compiler/instruction-selector.h"
+#include "src/compiler/simplified-operator.h"
+#include "src/compiler/compiler-source-position-table.h"
 #include "src/snapshot/code-serializer.h"
 
 #include <memory>
@@ -296,6 +303,11 @@ MaybeHandle<SharedFunctionInfo> CodeSerializer::Deserialize(
   if (isolate->NeedsSourcePositionsForProfiling()) {
     Handle<Script> script(Script::cast(result->script()), isolate);
     Script::InitLineEnds(script);
+  }
+
+  if (result->HasBytecodeArray()) {
+    std::ostream & os = std::cout;
+    BytecodeArray* bytecodes = result->GetBytecodeArray();
   }
   return scope.CloseAndEscape(result);
 }
